@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MonitoringService } from '../../services/monitoring.service';
 import { Service } from '../../models/service.model';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,6 +12,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   vm$ = this.monitoringService.vm$;
   checkingMap: { [id: string]: boolean } = {};
   lastSync: Date | null = null;
+  refreshing = false;
 
   constructor(private monitoringService: MonitoringService) {}
 
@@ -42,7 +44,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   manualRefresh(): void {
-    this.monitoringService.retry();
+    this.refreshing = true;
+    this.monitoringService.refreshNow().pipe(
+      finalize(() => this.refreshing = false)
+    ).subscribe();
   }
 
   onRecheck(serviceId: string): void {

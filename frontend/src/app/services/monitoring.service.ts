@@ -67,6 +67,28 @@ export class MonitoringService {
     this.startPolling();
   }
 
+  refreshNow(): Observable<HealthCheckResult[] | null> {
+    return this.http.post<HealthCheckResult[]>(`${environment.apiBaseUrl}/services/check`, {}).pipe(
+      tap(results => {
+        const updatedServices = this.state.services.map(s => {
+          const result = results.find(r => r.serviceId === s.id);
+          return result ? { ...s, status: result.status, latencyMs: result.latencyMs, lastCheckedAt: result.checkedAt } : s;
+        });
+        this.patchState({
+          services: updatedServices,
+          loading: false,
+          error: null,
+          lastSync: new Date(),
+          consecutiveFailures: 0
+        });
+      }),
+      catchError(error => {
+        this.handlePollingError(error);
+        return of(null);
+      })
+    );
+  }
+
   private handlePollingError(error: any) {
     const failures = this.state.consecutiveFailures + 1;
     if (failures >= environment.maxConsecutiveFailures) {

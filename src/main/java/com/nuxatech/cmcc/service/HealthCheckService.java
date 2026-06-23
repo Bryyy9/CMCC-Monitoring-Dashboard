@@ -11,6 +11,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class HealthCheckService {
@@ -71,5 +72,13 @@ public class HealthCheckService {
             service.getName(), service.getUrl(), logEntry.getStatus(), logEntry.getLatencyMs());
 
         return logEntry;
+    }
+
+    public List<HealthCheckLogEntity> checkAllServices() {
+        List<ServiceEntity> services = serviceService.getAllServiceEntities();
+        log.info("Running health check cycle for {} services", services.size());
+        return services.stream()
+            .map(this::checkService)
+            .toList();
     }
 }

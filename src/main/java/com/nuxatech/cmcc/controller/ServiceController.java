@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/services")
@@ -63,5 +64,17 @@ public class ServiceController {
             result.getLatencyMs(),
             result.getCheckedAt()
         );
+    }
+
+    @PostMapping("/check")
+    public List<CheckResponse> checkAllServices() {
+        return healthCheckService.checkAllServices().stream()
+            .map(log -> new CheckResponse(
+                log.getServiceId(),
+                log.getStatus(),
+                log.getLatencyMs(),
+                log.getCheckedAt()
+            ))
+            .collect(Collectors.toList());
     }
 }
