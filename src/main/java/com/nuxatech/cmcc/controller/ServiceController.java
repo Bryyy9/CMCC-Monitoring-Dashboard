@@ -58,6 +58,7 @@ public class ServiceController {
     public CheckResponse forceCheck(@PathVariable UUID id) {
         var entity = serviceService.getServiceEntity(id);
         var result = healthCheckService.checkService(entity);
+        serviceService.saveServiceEntity(entity);
         return new CheckResponse(
             result.getServiceId(),
             result.getStatus(),
@@ -68,13 +69,17 @@ public class ServiceController {
 
     @PostMapping("/check")
     public List<CheckResponse> checkAllServices() {
-        return healthCheckService.checkAllServices().stream()
-            .map(log -> new CheckResponse(
-                log.getServiceId(),
-                log.getStatus(),
-                log.getLatencyMs(),
-                log.getCheckedAt()
-            ))
+        return serviceService.getAllServiceEntities().stream()
+            .map(entity -> {
+                var result = healthCheckService.checkService(entity);
+                serviceService.saveServiceEntity(entity);
+                return new CheckResponse(
+                    result.getServiceId(),
+                    result.getStatus(),
+                    result.getLatencyMs(),
+                    result.getCheckedAt()
+                );
+            })
             .collect(Collectors.toList());
     }
 }

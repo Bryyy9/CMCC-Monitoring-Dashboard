@@ -11,7 +11,6 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
-import java.util.List;
 
 @Service
 public class HealthCheckService {
@@ -20,14 +19,10 @@ public class HealthCheckService {
 
     private final RestTemplate restTemplate;
     private final HealthCheckLogRepository healthCheckLogRepository;
-    private final ServiceService serviceService;
 
-    public HealthCheckService(RestTemplate restTemplate,
-                              HealthCheckLogRepository healthCheckLogRepository,
-                              ServiceService serviceService) {
+    public HealthCheckService(RestTemplate restTemplate, HealthCheckLogRepository healthCheckLogRepository) {
         this.restTemplate = restTemplate;
         this.healthCheckLogRepository = healthCheckLogRepository;
-        this.serviceService = serviceService;
     }
 
     public HealthCheckLogEntity checkService(ServiceEntity service) {
@@ -44,20 +39,12 @@ public class HealthCheckService {
                 logEntry.setLatencyMs(latency);
                 logEntry.setErrorMessage(null);
             } else {
-                logEntry.setStatus(ServiceStatus.DOWN);
-                logEntry.setLatencyMs(latency);
-                logEntry.setErrorMessage("HTTP " + response.getStatusCode().value());
+                setDownResult(logEntry, latency, "HTTP " + response.getStatusCode().value());
             }
         } catch (ResourceAccessException e) {
-            long latency = System.currentTimeMillis() - start;
-            logEntry.setStatus(ServiceStatus.DOWN);
-            logEntry.setLatencyMs(latency);
-            logEntry.setErrorMessage("Timeout or connection error: " + e.getMessage());
+            setDownResult(logEntry, System.currentTimeMillis() - start, "Timeout or connection error: " + e.getMessage());
         } catch (Exception e) {
-            long latency = System.currentTimeMillis() - start;
-            logEntry.setStatus(ServiceStatus.DOWN);
-            logEntry.setLatencyMs(latency);
-            logEntry.setErrorMessage(e.getMessage());
+            setDownResult(logEntry, System.currentTimeMillis() - start, e.getMessage());
         }
 
         logEntry.setCheckedAt(Instant.now());
@@ -66,7 +53,6 @@ public class HealthCheckService {
         service.setStatus(logEntry.getStatus());
         service.setLastCheckedAt(logEntry.getCheckedAt());
         service.setLatencyMs(logEntry.getLatencyMs());
-        serviceService.saveServiceEntity(service);
 
         log.debug("Checked service {} ({}): {} in {}ms",
             service.getName(), service.getUrl(), logEntry.getStatus(), logEntry.getLatencyMs());
@@ -74,11 +60,9 @@ public class HealthCheckService {
         return logEntry;
     }
 
-    public List<HealthCheckLogEntity> checkAllServices() {
-        List<ServiceEntity> services = serviceService.getAllServiceEntities();
-        log.info("Running health check cycle for {} services", services.size());
-        return services.stream()
-            .map(this::checkService)
-            .toList();
+    private void setDownResult(HealthCheckLogEntity logEntry, long latency, String errorMessage) {
+        logEntry.setStatus(ServiceStatus.DOWN);
+        logEntry.setLatencyMs(latency);
+        logEntry.setErrorMessage(errorMessage);
     }
 }
