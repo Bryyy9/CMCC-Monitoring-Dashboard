@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MonitoringService } from '../../services/monitoring.service';
+import { Service } from '../../models/service.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,19 +10,39 @@ import { MonitoringService } from '../../services/monitoring.service';
 export class DashboardComponent implements OnInit, OnDestroy {
   vm$ = this.monitoringService.vm$;
   checkingMap: { [id: string]: boolean } = {};
+  lastSync: Date | null = null;
 
   constructor(private monitoringService: MonitoringService) {}
 
-  trackById(index: number, service: any): string {
+  trackById(index: number, service: Service): string {
     return service.id;
+  }
+
+  upCount(services: Service[]): number {
+    return services.filter(s => s.status === 'UP').length;
+  }
+
+  downCount(services: Service[]): number {
+    return services.filter(s => s.status === 'DOWN').length;
+  }
+
+  unknownCount(services: Service[]): number {
+    return services.filter(s => s.status === 'UNKNOWN').length;
   }
 
   ngOnInit(): void {
     this.monitoringService.startPolling();
+    this.monitoringService.vm$.subscribe(vm => {
+      if (vm.lastSync) this.lastSync = vm.lastSync;
+    });
   }
 
   ngOnDestroy(): void {
     this.monitoringService.stopPolling();
+  }
+
+  manualRefresh(): void {
+    this.monitoringService.retry();
   }
 
   onRecheck(serviceId: string): void {
@@ -32,15 +53,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.checkingMap[serviceId] = false;
-        // In a real app we might pass this error down to the service card,
-        // but here we can rely on the service card maintaining its own error state,
-        // or just let it fail silently (the card has an errorMsg if we handle it there).
-        // Wait, the plan says "Inline error message jika force re-check gagal"
-        // Let's just handle it. We can emit it back or the card can do it.
-        // Actually, since MonitoringService.forceCheck returns an Observable,
-        // the ServiceCardComponent doesn't subscribe. The Dashboard does.
-        // It's better if we just log it or we can pass error to ServiceCard somehow.
-        // I will let it be for now since it's an MVP.
         console.error('Recheck failed', err);
       }
     });

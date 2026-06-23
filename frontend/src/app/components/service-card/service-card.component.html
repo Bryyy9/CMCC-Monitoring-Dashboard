@@ -1,33 +1,112 @@
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow">
+<!-- Service Card: UP -->
+<div *ngIf="service.status === 'UP'"
+  class="bg-surface-container-lowest border border-outline-variant p-6 rounded-lg flex flex-col hover:border-[#d1d5db] hover:shadow-[0_4px_4px_rgba(0,0,0,0.02)] transition-all">
+
   <div class="flex justify-between items-start mb-4">
     <div>
-      <h3 class="text-lg font-semibold text-gray-900 truncate" [title]="service.name">{{ service.name }}</h3>
-      <p class="text-sm text-gray-500">{{ service.category }}</p>
+      <h3 class="text-headline-sm text-on-surface">{{ service.name }}</h3>
+      <span class="text-label-caps text-on-surface-variant">{{ service.category }}</span>
     </div>
     <app-status-badge [status]="service.status"></app-status-badge>
   </div>
 
-  <div class="text-sm text-gray-600 mb-4 space-y-2">
-    <div class="flex items-center">
-      <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-      <span *ngIf="service.latencyMs !== null; else noLatency">{{ service.latencyMs }} ms</span>
-      <ng-template #noLatency><span>-</span></ng-template>
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div>
+      <span class="block text-label-caps text-on-surface-variant mb-1">Latensi</span>
+      <span class="font-mono text-data-md text-on-surface">
+        {{ service.latencyMs !== null ? service.latencyMs + 'ms' : '--' }}
+      </span>
     </div>
-    <div class="flex items-center text-xs text-gray-500">
-      Last checked: {{ service.lastCheckedAt ? (service.lastCheckedAt | date:'medium') : 'Never' }}
+    <div>
+      <span class="block text-label-caps text-on-surface-variant mb-1">Terakhir Dicek</span>
+      <span class="font-mono text-data-md text-on-surface">
+        {{ service.lastCheckedAt ? (service.lastCheckedAt | date:'HH:mm:ss') : 'Belum' }}
+      </span>
     </div>
   </div>
 
-  <div *ngIf="errorMsg" class="mb-3 text-xs text-red-600 bg-red-50 p-2 rounded border border-red-100">
+  <div *ngIf="errorMsg" class="mb-3 text-body-sm text-[#b91c1c] bg-[#fef2f2] p-2 rounded border border-[#fecaca]">
     {{ errorMsg }}
   </div>
 
   <button (click)="onRecheck()" [disabled]="checking"
-    class="w-full flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
-    <svg *ngIf="checking" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-    </svg>
-    {{ checking ? 'Checking...' : 'Force Re-check' }}
+    class="w-full mt-auto border border-outline-variant text-on-surface py-2 rounded font-body-sm font-medium hover:bg-surface-container-high transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+    <span *ngIf="checking" class="animate-spin material-symbols-outlined" style="font-size:16px">refresh</span>
+    {{ checking ? 'Memeriksa...' : 'Periksa Ulang' }}
+  </button>
+</div>
+
+<!-- Service Card: DOWN -->
+<div *ngIf="service.status === 'DOWN'"
+  class="bg-surface-container-lowest border-2 border-[#ef4444] p-6 rounded-lg flex flex-col shadow-sm relative overflow-hidden">
+  <div class="absolute inset-0 bg-[#ef4444] opacity-5 pointer-events-none"></div>
+
+  <div class="flex justify-between items-start mb-4 relative z-10">
+    <div>
+      <h3 class="text-headline-sm text-on-surface">{{ service.name }}</h3>
+      <span class="text-label-caps text-on-surface-variant">{{ service.category }}</span>
+    </div>
+    <app-status-badge [status]="service.status"></app-status-badge>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4 mb-6 relative z-10">
+    <div>
+      <span class="block text-label-caps text-on-surface-variant mb-1">Latensi</span>
+      <span class="font-mono text-data-md text-on-surface">
+        {{ service.latencyMs !== null ? service.latencyMs + 'ms' : 'TIMEOUT' }}
+      </span>
+    </div>
+    <div>
+      <span class="block text-label-caps text-on-surface-variant mb-1">Terakhir Dicek</span>
+      <span class="font-mono text-data-md text-[#ef4444]">
+        {{ service.lastCheckedAt ? (service.lastCheckedAt | date:'HH:mm:ss') : 'Belum' }}
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="errorMsg" class="mb-3 text-body-sm text-[#b91c1c] bg-[#fef2f2] p-2 rounded border border-[#fecaca] relative z-10">
+    {{ errorMsg }}
+  </div>
+
+  <button (click)="onRecheck()" [disabled]="checking"
+    class="w-full mt-auto bg-primary text-on-primary py-2 rounded font-body-sm font-medium hover:bg-surface-tint transition-colors relative z-10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+    <span *ngIf="checking" class="animate-spin material-symbols-outlined" style="font-size:16px">refresh</span>
+    {{ checking ? 'Memeriksa...' : 'Periksa Ulang' }}
+  </button>
+</div>
+
+<!-- Service Card: UNKNOWN -->
+<div *ngIf="service.status === 'UNKNOWN'"
+  class="bg-surface-container-lowest border border-outline-variant p-6 rounded-lg flex flex-col hover:border-[#d1d5db] hover:shadow-[0_4px_4px_rgba(0,0,0,0.02)] transition-all">
+
+  <div class="flex justify-between items-start mb-4">
+    <div>
+      <h3 class="text-headline-sm text-on-surface">{{ service.name }}</h3>
+      <span class="text-label-caps text-on-surface-variant">{{ service.category }}</span>
+    </div>
+    <app-status-badge [status]="service.status"></app-status-badge>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div>
+      <span class="block text-label-caps text-on-surface-variant mb-1">Latensi</span>
+      <span class="font-mono text-data-md text-outline">--</span>
+    </div>
+    <div>
+      <span class="block text-label-caps text-on-surface-variant mb-1">Terakhir Dicek</span>
+      <span class="font-mono text-data-md text-outline">
+        {{ service.lastCheckedAt ? (service.lastCheckedAt | date:'HH:mm:ss') : 'Belum' }}
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="errorMsg" class="mb-3 text-body-sm text-[#b91c1c] bg-[#fef2f2] p-2 rounded border border-[#fecaca]">
+    {{ errorMsg }}
+  </div>
+
+  <button (click)="onRecheck()" [disabled]="checking"
+    class="w-full mt-auto border border-outline-variant text-on-surface py-2 rounded font-body-sm font-medium hover:bg-surface-container-high transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+    <span *ngIf="checking" class="animate-spin material-symbols-outlined" style="font-size:16px">refresh</span>
+    {{ checking ? 'Memeriksa...' : 'Periksa Ulang' }}
   </button>
 </div>

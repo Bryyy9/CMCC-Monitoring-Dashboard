@@ -1,16 +1,20 @@
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium"
-      [class.bg-green-100]="status === 'UP'"
-      [class.text-green-800]="status === 'UP'"
-      [class.bg-red-100]="status === 'DOWN'"
-      [class.text-red-800]="status === 'DOWN'"
-      [class.bg-gray-100]="status === 'UNKNOWN'"
-      [class.text-gray-800]="status === 'UNKNOWN'">
-  
-  <span class="w-2 h-2 mr-1.5 rounded-full"
-        [class.bg-green-500]="status === 'UP'"
-        [class.bg-red-500]="status === 'DOWN'"
-        [class.status-down]="status === 'DOWN'"
-        [class.bg-gray-400]="status === 'UNKNOWN'">
-  </span>
-  {{ status }}
-</span>
+<!-- UP Badge -->
+<div *ngIf="status === 'UP'"
+  class="bg-[#16a34a] bg-opacity-10 text-[#16a34a] px-2 py-1 rounded text-label-caps flex items-center gap-1">
+  <span class="w-2 h-2 rounded-full bg-[#16a34a]"></span>
+  UP
+</div>
+
+<!-- DOWN Badge with pulse animation -->
+<div *ngIf="status === 'DOWN'"
+  class="bg-[#ef4444] text-white px-2 py-1 rounded text-label-caps flex items-center gap-1 pulse-animation">
+  <span class="material-symbols-outlined" style="font-size:14px">error</span>
+  DOWN
+</div>
+
+<!-- UNKNOWN Badge -->
+<div *ngIf="status === 'UNKNOWN'"
+  class="bg-gray-200 text-gray-600 px-2 py-1 rounded text-label-caps flex items-center gap-1">
+  <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+  UNKNOWN
+</div>

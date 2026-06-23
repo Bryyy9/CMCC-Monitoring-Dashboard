@@ -1,45 +1,108 @@
-<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-7xl mx-auto" *ngIf="vm$ | async as vm">
-    
-    <div class="mb-8 flex justify-between items-end">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">CMCC Dashboard</h1>
-        <p class="mt-1 text-sm text-gray-500">Centralized Monitoring Command Center</p>
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 h-16 bg-surface border-b border-outline-variant">
+  <div class="flex items-center gap-6">
+    <span class="text-headline-md font-black tracking-tight text-on-surface">CMCC</span>
+    <span class="text-label-caps text-on-surface-variant flex items-center gap-1" *ngIf="lastSync">
+      <span class="material-symbols-outlined" style="font-size:16px">sync</span>
+      Last Sync: {{ lastSync | date:'HH:mm:ss' }}
+    </span>
+  </div>
+  <div class="flex items-center gap-2 text-primary">
+    <button (click)="manualRefresh()"
+      class="hover:bg-surface-container-high p-2 rounded-full transition-colors flex items-center justify-center active:scale-95"
+      title="Refresh">
+      <span class="material-symbols-outlined">refresh</span>
+    </button>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="mt-16 bg-background min-h-[calc(100vh-64px)] overflow-y-auto p-8 space-y-4">
+  <ng-container *ngIf="vm$ | async as vm">
+
+    <!-- Error Banner -->
+    <div *ngIf="vm.error"
+      class="w-full bg-[#fef2f2] border-l-[4px] border-[#ef4444] p-4 flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-3 text-[#b91c1c]">
+        <span class="material-symbols-outlined">error</span>
+        <span class="text-headline-sm font-semibold">
+          Backend Unreachable — Retrying automatically...
+        </span>
       </div>
-      <div class="text-xs text-gray-400" *ngIf="vm.lastSync">
-        Last synced: {{ vm.lastSync | date:'mediumTime' }}
-      </div>
+    </div>
+    <div *ngIf="vm.error && vm.services.length > 0"
+      class="text-body-sm text-on-surface-variant px-1">
+      Menampilkan data terakhir yang diketahui.
     </div>
 
-    <app-error-banner 
-      [message]="vm.error" 
-      [hasStaleData]="vm.services.length > 0">
-    </app-error-banner>
+    <!-- Summary Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-xl" *ngIf="vm.services.length > 0 || vm.loading">
 
-    <app-summary-bar 
-      *ngIf="vm.services.length > 0"
-      [services]="vm.services">
-    </app-summary-bar>
+      <!-- Skeleton loaders when first loading -->
+      <ng-container *ngIf="vm.loading && vm.services.length === 0">
+        <div *ngFor="let i of [0,1,2,3]" class="shimmer h-28 rounded-lg border border-outline-variant"></div>
+      </ng-container>
 
-    <div *ngIf="vm.loading && vm.services.length === 0" class="flex justify-center items-center h-64">
-      <svg class="animate-spin h-8 w-8 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
+      <ng-container *ngIf="vm.services.length > 0">
+        <!-- Total -->
+        <div class="bg-surface-container-lowest border border-outline-variant p-6 flex flex-col rounded-lg">
+          <span class="text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Total Layanan</span>
+          <div class="flex items-end gap-2 mt-auto">
+            <span class="font-mono text-display-lg text-on-surface">{{ vm.services.length }}</span>
+          </div>
+        </div>
+        <!-- UP -->
+        <div class="bg-surface-container-lowest border border-outline-variant p-6 flex flex-col rounded-lg">
+          <span class="text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">UP</span>
+          <div class="flex items-end gap-2 mt-auto">
+            <span class="font-mono text-display-lg text-[#16a34a]">{{ upCount(vm.services) }}</span>
+            <span class="material-symbols-outlined text-[#16a34a] mb-1">arrow_upward</span>
+          </div>
+        </div>
+        <!-- DOWN -->
+        <div class="bg-surface-container-lowest p-6 flex flex-col rounded-lg"
+          [class.border-2]="downCount(vm.services) > 0"
+          [class.border-outline-variant]="downCount(vm.services) === 0"
+          [class.border]="downCount(vm.services) === 0"
+          [class.border-[#ef4444]]="downCount(vm.services) > 0"
+          [class.bg-[#fef2f2]]="downCount(vm.services) > 0">
+          <span class="text-label-caps uppercase tracking-wider mb-2"
+            [class.text-on-surface-variant]="downCount(vm.services) === 0"
+            [class.text-[#ef4444]]="downCount(vm.services) > 0">DOWN</span>
+          <div class="flex items-end gap-2 mt-auto">
+            <span class="font-mono text-display-lg"
+              [class.text-on-surface]="downCount(vm.services) === 0"
+              [class.text-[#ef4444]]="downCount(vm.services) > 0">{{ downCount(vm.services) }}</span>
+            <span *ngIf="downCount(vm.services) > 0" class="material-symbols-outlined text-[#ef4444] mb-1">warning</span>
+          </div>
+        </div>
+        <!-- UNKNOWN -->
+        <div class="bg-surface-container-lowest border border-outline-variant p-6 flex flex-col rounded-lg">
+          <span class="text-label-caps text-on-surface-variant uppercase tracking-wider mb-2">UNKNOWN</span>
+          <div class="flex items-end gap-2 mt-auto">
+            <span class="font-mono text-display-lg text-outline">{{ unknownCount(vm.services) }}</span>
+            <span class="material-symbols-outlined text-outline mb-1">question_mark</span>
+          </div>
+        </div>
+      </ng-container>
+    </section>
+
+    <!-- Empty state -->
+    <div *ngIf="vm.services.length === 0 && !vm.loading && !vm.error"
+      class="text-center py-16 bg-surface-container-lowest rounded-lg border border-outline-variant border-dashed">
+      <span class="material-symbols-outlined text-[48px] text-outline">dns</span>
+      <p class="text-on-surface-variant mt-2">Tidak ada layanan yang terdaftar.</p>
     </div>
 
-    <div *ngIf="vm.services.length === 0 && !vm.loading && !vm.error" class="text-center py-12 bg-white rounded-lg border border-gray-200 border-dashed">
-      <p class="text-gray-500">No services found.</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-      <app-service-card 
+    <!-- Service Cards Grid -->
+    <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" *ngIf="vm.services.length > 0">
+      <app-service-card
         *ngFor="let svc of vm.services; trackBy: trackById"
         [service]="svc"
         [checking]="!!checkingMap[svc.id]"
         (recheck)="onRecheck($event)">
       </app-service-card>
-    </div>
+    </section>
 
-  </div>
-</div>
+  </ng-container>
+</main>
