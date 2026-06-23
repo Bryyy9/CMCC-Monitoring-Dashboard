@@ -1,0 +1,45 @@
+<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto" *ngIf="vm$ | async as vm">
+    
+    <div class="mb-8 flex justify-between items-end">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">CMCC Dashboard</h1>
+        <p class="mt-1 text-sm text-gray-500">Centralized Monitoring Command Center</p>
+      </div>
+      <div class="text-xs text-gray-400" *ngIf="vm.lastSync">
+        Last synced: {{ vm.lastSync | date:'mediumTime' }}
+      </div>
+    </div>
+
+    <app-error-banner 
+      [message]="vm.error" 
+      [hasStaleData]="vm.services.length > 0">
+    </app-error-banner>
+
+    <app-summary-bar 
+      *ngIf="vm.services.length > 0"
+      [services]="vm.services">
+    </app-summary-bar>
+
+    <div *ngIf="vm.loading && vm.services.length === 0" class="flex justify-center items-center h-64">
+      <svg class="animate-spin h-8 w-8 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+    </div>
+
+    <div *ngIf="vm.services.length === 0 && !vm.loading && !vm.error" class="text-center py-12 bg-white rounded-lg border border-gray-200 border-dashed">
+      <p class="text-gray-500">No services found.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <app-service-card 
+        *ngFor="let svc of vm.services; trackBy: trackById"
+        [service]="svc"
+        [checking]="!!checkingMap[svc.id]"
+        (recheck)="onRecheck($event)">
+      </app-service-card>
+    </div>
+
+  </div>
+</div>

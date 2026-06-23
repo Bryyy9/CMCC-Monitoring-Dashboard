@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CMCC Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;family=JetBrains+Mono:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#151c25",
+                        "on-secondary-container": "#007432",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#eaf1fe",
+                        "secondary-container": "#6bff8f",
+                        "on-primary-fixed-variant": "#404758",
+                        "primary-fixed": "#dce2f7",
+                        "inverse-surface": "#2a313b",
+                        "on-primary-container": "#7d8497",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#ef4444",
+                        "surface-container-high": "#e2e8f5",
+                        "primary-fixed-dim": "#c0c6db",
+                        "outline": "#76777d",
+                        "secondary-fixed": "#6bff8f",
+                        "tertiary": "#000000",
+                        "surface-bright": "#f8f9ff",
+                        "surface": "#f8f9ff",
+                        "surface-container-low": "#eef4ff",
+                        "tertiary-fixed": "#ffdad7",
+                        "on-secondary-fixed": "#002109",
+                        "on-surface-variant": "#45464c",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#930013",
+                        "primary-container": "#141b2b",
+                        "surface-container": "#e7eefb",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#575e70",
+                        "outline-variant": "#c6c6cd",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#141b2b",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#410004",
+                        "background": "#f8f9ff",
+                        "secondary": "#006e2f",
+                        "primary": "#000000",
+                        "on-tertiary-fixed": "#410004",
+                        "secondary-fixed-dim": "#4ae176",
+                        "on-background": "#151c25",
+                        "inverse-primary": "#c0c6db",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#dce3f0",
+                        "surface-dim": "#d4dae7",
+                        "on-secondary-fixed-variant": "#005321",
+                        "surface-container-highest": "#dce3f0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "margin-desktop": "32px",
+                        "unit": "4px",
+                        "gutter": "16px",
+                        "xl": "32px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "data-md": ["JetBrains Mono"],
+                        "headline-sm": ["Inter"],
+                        "data-lg": ["JetBrains Mono"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "data-lg": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .pulse-animation {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite linear;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md h-screen overflow-hidden flex flex-col">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface border-b border-outline-variant flat no shadows">
+<div class="flex items-center gap-6">
+<span class="text-headline-md font-headline-md font-black tracking-tight text-on-surface">CMCC</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">sync</span> Last Sync: 14:02:11
+            </span>
+</div>
+<nav class="hidden md:flex items-center gap-6 h-full">
+<a class="text-primary border-b-2 border-primary font-bold pb-1 text-label-caps font-label-caps h-full flex items-center pt-[2px]" href="#">Overview</a>
+<a class="text-on-surface-variant font-medium text-label-caps font-label-caps hover:bg-surface-container-high transition-colors duration-200 px-2 rounded h-8 flex items-center" href="#">Incidents</a>
+<a class="text-on-surface-variant font-medium text-label-caps font-label-caps hover:bg-surface-container-high transition-colors duration-200 px-2 rounded h-8 flex items-center" href="#">Logs</a>
+<a class="text-on-surface-variant font-medium text-label-caps font-label-caps hover:bg-surface-container-high transition-colors duration-200 px-2 rounded h-8 flex items-center" href="#">Topology</a>
+</nav>
+<div class="flex items-center gap-4 text-primary">
+<button class="hover:bg-surface-container-high p-2 rounded-full transition-colors duration-200 flex items-center justify-center active:scale-95 opacity-80 transition-all">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+<button class="hover:bg-surface-container-high p-2 rounded-full transition-colors duration-200 flex items-center justify-center active:scale-95 opacity-80 transition-all">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="hover:bg-surface-container-high p-2 rounded-full transition-colors duration-200 flex items-center justify-center active:scale-95 opacity-80 transition-all">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- SideNavBar & Main Content Wrapper -->
+<div class="flex flex-1 mt-16 h-[calc(100vh-64px)] overflow-hidden">
+<!-- SideNavBar -->
+<aside class="hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-64px)] w-64 p-4 bg-surface-container-low border-r border-outline-variant flat no shadows">
+<div class="mb-8 px-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A professional high-key portrait of a system administrator in a brightly lit, modern command center environment. Minimalist style with a light gray background, focusing on a clean, professional aesthetic suitable for a technical dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZloPHPNIDMjOkqqcAdpEI-Px5AwGco3SsHfRH4wx07pdr4VDR7WPK0PhPffTVsNDL8bdIfrcd3HjwFT7NLgvHPIYm-qh7TRJiA_FYCsrqlswWqON55_5fRwW7KNuqKoheEWl6ClxCkzXmZu8D7L-XLPY9iIxNO-9pH_wsjrKJnJFOYmpEvGUevF8KvfwxeEMP1JSVikEs3J53Kk8yBedAyqNithBUXLRKIko5i7DVvpqMg2cP8hvF0etx58VCo0-B9CA2EZ8I3g"/>
+</div>
+<div>
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface">CMCC Admin</h2>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<a class="bg-primary-container text-on-primary-container rounded-xl flex items-center gap-3 px-4 py-3 text-label-caps font-label-caps active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+                </a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 text-label-caps font-label-caps hover:bg-surface-container-high transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined">emergency_home</span> Alerts
+                </a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 text-label-caps font-label-caps hover:bg-surface-container-high transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined">dns</span> Services
+                </a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 text-label-caps font-label-caps hover:bg-surface-container-high transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined">account_tree</span> Infrastructure
+                </a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 text-label-caps font-label-caps hover:bg-surface-container-high transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined">analytics</span> Reporting
+                </a>
+</nav>
+<button class="mt-4 mb-4 w-full bg-primary text-on-primary py-2 rounded-lg font-body-sm font-medium hover:bg-surface-tint transition-colors">Acknowledge All</button>
+<div class="mt-auto border-t border-outline-variant pt-4 flex flex-col gap-2">
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 text-label-caps font-label-caps hover:bg-surface-container-high transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined">help</span> Documentation
+                </a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 text-label-caps font-label-caps hover:bg-surface-container-high transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined">support_agent</span> Support
+                </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 lg:ml-64 bg-background overflow-y-auto p-margin-desktop space-y-gutter relative">
+<!-- Error Banner (Simulated) -->
+<div class="w-full bg-[#fef2f2] border-l-[4px] border-[#ef4444] p-4 flex items-center justify-between shadow-sm transition-all duration-300" id="error-banner">
+<div class="flex items-center gap-3 text-[#b91c1c]">
+<span class="material-symbols-outlined">error</span>
+<span class="font-headline-sm text-headline-sm font-semibold">Backend Unreachable - Retrying in 5s</span>
+</div>
+<button class="text-[#b91c1c] hover:bg-[#fee2e2] p-1 rounded transition-colors" onclick="document.getElementById('error-banner').style.display='none'">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Summary Section -->
+<section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter mb-xl">
+<!-- Card 1: Total -->
+<div class="bg-surface-container-lowest border border-outline-variant p-lg flex flex-col rounded-DEFAULT">
+<span class="text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2">Total Layanan</span>
+<div class="flex items-end gap-2 mt-auto">
+<span class="text-display-lg font-display-lg text-on-surface">42</span>
+</div>
+</div>
+<!-- Card 2: UP -->
+<div class="bg-surface-container-lowest border border-outline-variant p-lg flex flex-col rounded-DEFAULT">
+<span class="text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2">UP</span>
+<div class="flex items-end gap-2 mt-auto">
+<span class="text-display-lg font-display-lg text-[#16a34a]">38</span>
+<span class="material-symbols-outlined text-[#16a34a] mb-1">arrow_upward</span>
+</div>
+</div>
+<!-- Card 3: DOWN -->
+<div class="bg-surface-container-lowest border-[2px] border-[#ef4444] p-lg flex flex-col rounded-DEFAULT bg-[#fef2f2]">
+<span class="text-label-caps font-label-caps text-[#ef4444] uppercase tracking-wider mb-2">DOWN</span>
+<div class="flex items-end gap-2 mt-auto">
+<span class="text-display-lg font-display-lg text-[#ef4444]">3</span>
+<span class="material-symbols-outlined text-[#ef4444] mb-1">warning</span>
+</div>
+</div>
+<!-- Card 4: UNKNOWN -->
+<div class="bg-surface-container-lowest border border-outline-variant p-lg flex flex-col rounded-DEFAULT">
+<span class="text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider mb-2">UNKNOWN</span>
+<div class="flex items-end gap-2 mt-auto">
+<span class="text-display-lg font-display-lg text-outline">1</span>
+<span class="material-symbols-outlined text-outline mb-1">question_mark</span>
+</div>
+</div>
+</section>
+<!-- Service Cards Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
+<!-- Service Card 1 (UP) -->
+<div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-DEFAULT flex flex-col hover:border-[#d1d5db] hover:shadow-[0_4px_4px_rgba(0,0,0,0.02)] transition-all">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Auth Service</h3>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Internal</span>
+</div>
+<div class="bg-[#16a34a] bg-opacity-10 text-[#16a34a] px-2 py-1 rounded text-label-caps font-label-caps flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-[#16a34a]"></span> UP
+                        </div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div>
+<span class="block text-label-caps font-label-caps text-on-surface-variant mb-1">Latensi</span>
+<span class="text-data-md font-data-md text-on-surface">12ms</span>
+</div>
+<div>
+<span class="block text-label-caps font-label-caps text-on-surface-variant mb-1">Terakhir Dicek</span>
+<span class="text-data-md font-data-md text-on-surface">2 mins ago</span>
+</div>
+</div>
+<button class="w-full mt-auto border border-outline-variant text-on-surface py-2 rounded font-body-sm font-medium hover:bg-surface-container-high transition-colors">Periksa Ulang</button>
+</div>
+<!-- Service Card 2 (DOWN) -->
+<div class="bg-surface-container-lowest border-[2px] border-[#ef4444] p-6 rounded-DEFAULT flex flex-col shadow-sm relative overflow-hidden">
+<div class="absolute inset-0 bg-[#ef4444] opacity-5 pointer-events-none"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Payment Gateway</h3>
+<span class="text-label-caps font-label-caps text-on-surface-variant">External API</span>
+</div>
+<div class="bg-[#ef4444] text-white px-2 py-1 rounded text-label-caps font-label-caps flex items-center gap-1 pulse-animation">
+<span class="material-symbols-outlined text-[14px]">error</span> DOWN
+                        </div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6 relative z-10">
+<div>
+<span class="block text-label-caps font-label-caps text-on-surface-variant mb-1">Latensi</span>
+<span class="text-data-md font-data-md text-on-surface">TIMEOUT</span>
+</div>
+<div>
+<span class="block text-label-caps font-label-caps text-on-surface-variant mb-1">Terakhir Dicek</span>
+<span class="text-data-md font-data-md text-[#ef4444]">1 min ago</span>
+</div>
+</div>
+<button class="w-full mt-auto bg-primary text-on-primary py-2 rounded font-body-sm font-medium hover:bg-surface-tint transition-colors relative z-10">Periksa Ulang</button>
+</div>
+<!-- Service Card 3 (UNKNOWN) -->
+<div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-DEFAULT flex flex-col hover:border-[#d1d5db] hover:shadow-[0_4px_4px_rgba(0,0,0,0.02)] transition-all">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Legacy DB Sync</h3>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Internal Batch</span>
+</div>
+<div class="bg-gray-200 text-gray-600 px-2 py-1 rounded text-label-caps font-label-caps flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-gray-400"></span> UNKNOWN
+                        </div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div>
+<span class="block text-label-caps font-label-caps text-on-surface-variant mb-1">Latensi</span>
+<span class="text-data-md font-data-md text-outline">--</span>
+</div>
+<div>
+<span class="block text-label-caps font-label-caps text-on-surface-variant mb-1">Terakhir Dicek</span>
+<span class="text-data-md font-data-md text-outline">45 mins ago</span>
+</div>
+</div>
+<button class="w-full mt-auto border border-outline-variant text-on-surface py-2 rounded font-body-sm font-medium hover:bg-surface-container-high transition-colors">Periksa Ulang</button>
+</div>
+<!-- Service Card 4 (UP) -->
+<div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-DEFAULT flex flex-col hover:border-[#d1d5db] hover:shadow-[0_4px_4px_rgba(0,0,0,0.02)] transition-all">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">User Profile API</h3>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Microservice</span>
+</div>
+<div class="bg-[#16a34a] bg-opacity-10 text-[#16a34a] px-2 py-1 rounded text-label-caps font-label-caps flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-[#16a34a]"></span> UP
+                        </div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div>
+<span class="block text-label-caps font-label-caps text-on-surface-variant mb-1">Latensi</span>
+<span class="text-data-md font-data-md text-on-surface">45ms</span>
+</div>
+<div>
+<span class="block text-label-caps font-label-caps text-on-surface-variant mb-1">Terakhir Dicek</span>
+<span class="text-data-md font-data-md text-on-surface">Just now</span>
+</div>
+</div>
+<button class="w-full mt-auto border border-outline-variant text-on-surface py-2 rounded font-body-sm font-medium hover:bg-surface-container-high transition-colors">Periksa Ulang</button>
+</div>
+<!-- Service Card 5 (DOWN) -->
+<div class="bg-surface-container-lowest border-[2px] border-[#ef4444] p-6 rounded-DEFAULT flex flex-col shadow-sm relative overflow-hidden">
+<div class="absolute inset-0 bg-[#ef4444] opacity-5 pointer-events-none"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Notification Hub</h3>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Messaging</span>
+</div>
+<div class="bg-[#ef4444] text-white px-2 py-1 rounded text-label-caps font-label-caps flex items-center gap-1 pulse-animation">
+<span class="material-symbols-outlined text-[14px]">error</span> DOWN
+                        </div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6 relative z-10">
+<div>
+<span class="block text-label-caps font-label-caps text-on-surface-variant mb-1">Latensi</span>
+<span class="text-data-md font-data-md text-on-surface">1250ms</span>
+</div>
+<div>
+<span class="block text-label-caps font-label-caps text-on-surface-variant mb-1">Terakhir Dicek</span>
+<span class="text-data-md font-data-md text-[#ef4444]">30 sec ago</span>
+</div>
+</div>
+<button class="w-full mt-auto bg-primary text-on-primary py-2 rounded font-body-sm font-medium hover:bg-surface-tint transition-colors relative z-10">Periksa Ulang</button>
+</div>
+</section>
+</main>
+</div>
+</body></html>

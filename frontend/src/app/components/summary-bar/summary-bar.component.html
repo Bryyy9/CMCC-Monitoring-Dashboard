@@ -1,0 +1,26 @@
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6 flex flex-wrap gap-4 items-center">
+  <div class="text-sm font-medium text-gray-700 mr-2">System Overview</div>
+  
+  <div class="flex items-center space-x-2 bg-gray-50 px-3 py-1.5 rounded-md border border-gray-100">
+    <span class="text-xs text-gray-500 uppercase tracking-wider">Total</span>
+    <span class="text-sm font-bold text-gray-900">{{ total }}</span>
+  </div>
+  
+  <div class="flex items-center space-x-2 bg-green-50 px-3 py-1.5 rounded-md border border-green-100">
+    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+    <span class="text-xs text-green-700 uppercase tracking-wider">UP</span>
+    <span class="text-sm font-bold text-green-900">{{ up }}</span>
+  </div>
+  
+  <div class="flex items-center space-x-2 bg-red-50 px-3 py-1.5 rounded-md border border-red-100">
+    <span class="w-2 h-2 rounded-full bg-red-500" [class.status-down]="down > 0"></span>
+    <span class="text-xs text-red-700 uppercase tracking-wider">DOWN</span>
+    <span class="text-sm font-bold text-red-900">{{ down }}</span>
+  </div>
+  
+  <div class="flex items-center space-x-2 bg-gray-100 px-3 py-1.5 rounded-md border border-gray-200">
+    <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+    <span class="text-xs text-gray-600 uppercase tracking-wider">UNKNOWN</span>
+    <span class="text-sm font-bold text-gray-800">{{ unknown }}</span>
+  </div>
+</div>

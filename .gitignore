@@ -1,0 +1,6 @@
+target/
+node_modules/
+.angular/
+.env
+*.log
+.DS_Store
